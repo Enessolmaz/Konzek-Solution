@@ -27,6 +27,7 @@ const ListItems = () => {
   const searchFilter = useSelector(
     (state: FilterList) => state.search.searchValue
   );
+  const [selectedItemBG, setSelectedItemBG] = useState("");
 
   useEffect(() => {
     const randomColor = () => {
@@ -68,6 +69,36 @@ const ListItems = () => {
     );
   });
 
+  const selectedItemRandomBg = (id: React.SetStateAction<string>) => {
+    setSelectedItem(selectedItem === id ? "" : id);
+    const colors = [
+      {
+        bgColor: "bg-red-500",
+      },
+      {
+        bgColor: "bg-blue-500",
+      },
+      {
+        bgColor: "bg-yellow-500",
+      },
+      {
+        bgColor: "bg-lime-500",
+      },
+      {
+        bgColor: "bg-indigo-500",
+      },
+    ];
+    const newColor = colors[Math.floor(Math.random() * colors.length)].bgColor;
+    setSelectedItemBG(newColor);
+
+    if (selectedItemBG === newColor) {
+      const newColorArray = colors.filter((item) => item.bgColor !== newColor);
+      const uniqueColor =
+        newColorArray[Math.floor(Math.random() * newColorArray.length)].bgColor;
+      setSelectedItemBG(uniqueColor);
+    }
+  };
+
   return (
     <div className="flex flex-col h-full gap-6">
       {loading ? (
@@ -77,15 +108,15 @@ const ListItems = () => {
           <div className="flex flex-wrap gap-8">
             {filteredData.slice(0, visibleItemCount).map((item: FilterList) => (
               <div
-                className={`bg-gradient-to-r transition-all - cursor-pointer rounded relative bg- w-72 h-36 px-6 pt-6 pb-1 hover:shadow-lg  ${
+                className={`transition-all cursor-pointer rounded relative w-72 h-36 px-6 pt-6 pb-1 hover:shadow-lg  ${
                   selectedItem === item.id
-                    ? "bg-[#4716f818] text-[#ffffff]"
-                    : "bg-[#ffffff] text-[#5a5a5a]"
+                    ? `${selectedItemBG} text-white`
+                    : // ? selectedItemBG
+                      // : ""
+                      "bg-[#ffffff] text-[#5a5a5a]"
                 }`}
                 key={item.id}
-                onClick={() => {
-                  setSelectedItem(selectedItem === item.id ? "" : item.id);
-                }}
+                onClick={() => selectedItemRandomBg(item.id)}
               >
                 <span
                   className={`absolute top-[-22px] h-10 w-10 flex items-center justify-center text-white rounded-xl font-bold ${item.color}`}
@@ -94,7 +125,7 @@ const ListItems = () => {
                 </span>
                 <div className="flex flex-col h-full gap-4 ">
                   <div className="flex flex-col mt-2 gap-1">
-                    <span className="text-[#6E8098] text-sm">
+                    <span className="text-[#2e2e2e] text-sm">
                       {item.currency}
                     </span>
                     <span className="text-[#19202D] font-bold">
